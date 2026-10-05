@@ -1,26 +1,251 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg-primary: #fafafa;
+  --bg-surface: #ffffff;
+  --bg-surface-elevated: #f4f4f6;
+  --bg-card: rgba(255, 255, 255, 0.85);
+  --border-subtle: rgba(0, 0, 0, 0.08);
+  --border-medium: rgba(0, 0, 0, 0.14);
+  --text-primary: #090a0f;
+  --text-secondary: #52525b;
+  --text-muted: #71717a;
+  --accent: #4f46e5;
+  --accent-glow: rgba(79, 70, 229, 0.15);
+  --accent-hover: #4338ca;
+  --accent-cyan: #0891b2;
+  --grid-line: rgba(0, 0, 0, 0.04);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+.dark {
+  --bg-primary: #090a0f;
+  --bg-surface: #10121a;
+  --bg-surface-elevated: #161922;
+  --bg-card: rgba(16, 18, 26, 0.75);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-medium: rgba(255, 255, 255, 0.16);
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --accent: #6366f1;
+  --accent-glow: rgba(99, 102, 241, 0.2);
+  --accent-hover: #818cf8;
+  --accent-cyan: #06b6d4;
+  --grid-line: rgba(255, 255, 255, 0.03);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  transition: background-color 0.25s ease, color 0.25s ease;
+  overflow-x: hidden;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
+
+/* Background Subtle Grid Pattern */
+.bg-grid-pattern {
+  background-image: 
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+.bg-dot-pattern {
+  background-image: radial-gradient(var(--grid-line) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Glassmorphism utility */
+.glass-panel {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-subtle);
+}
+
+.glass-panel-elevated {
+  background: var(--bg-surface-elevated);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-medium);
+}
+
+/* Custom smooth scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-medium);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Selection */
+::selection {
+  background: var(--accent);
+  color: #ffffff;
+}
+
+/* Custom Subtle Glow */
+.accent-glow-box {
+  box-shadow: 0 0 40px -10px var(--accent-glow);
+}
+
+/* Hide scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ─────────────────────────────────────────────────
+   Section Gradient Backgrounds
+   Each section has a unique subtle hue radiating
+   from the top-left corner as a light source.
+   Light mode → near-white tints
+   Dark mode  → rich dark atmospheric glows
+   ───────────────────────────────────────────────── */
+
+/* Hero — indigo/blue glow from top-left */
+section:first-of-type,
+section.hero-section {
+  background: radial-gradient(
+    ellipse 80% 60% at 0% 0%,
+    rgba(99, 102, 241, 0.06) 0%,
+    rgba(147, 197, 253, 0.03) 40%,
+    transparent 70%
+  );
+}
+.dark section:first-of-type,
+.dark section.hero-section {
+  background: radial-gradient(
+    ellipse 80% 60% at 0% 0%,
+    rgba(99, 102, 241, 0.12) 0%,
+    rgba(79, 70, 229, 0.06) 40%,
+    transparent 70%
+  );
+}
+
+/* Reusable section gradient classes */
+.section-gradient-indigo {
+  background: radial-gradient(
+    ellipse 90% 70% at 0% 0%,
+    rgba(99, 102, 241, 0.07) 0%,
+    rgba(139, 92, 246, 0.03) 35%,
+    transparent 65%
+  );
+}
+.dark .section-gradient-indigo {
+  background: radial-gradient(
+    ellipse 90% 70% at 0% 0%,
+    rgba(99, 102, 241, 0.13) 0%,
+    rgba(79, 70, 229, 0.06) 40%,
+    transparent 70%
+  );
+}
+
+.section-gradient-violet {
+  background: radial-gradient(
+    ellipse 90% 70% at 0% 0%,
+    rgba(139, 92, 246, 0.07) 0%,
+    rgba(99, 102, 241, 0.03) 35%,
+    transparent 65%
+  );
+}
+.dark .section-gradient-violet {
+  background: radial-gradient(
+    ellipse 90% 70% at 0% 0%,
+    rgba(139, 92, 246, 0.13) 0%,
+    rgba(109, 40, 217, 0.05) 40%,
+    transparent 70%
+  );
+}
+
+.section-gradient-cyan {
+  background: radial-gradient(
+    ellipse 90% 70% at 0% 0%,
+    rgba(6, 182, 212, 0.06) 0%,
+    rgba(59, 130, 246, 0.03) 35%,
+    transparent 65%
+  );
+}
+.dark .section-gradient-cyan {
+  background: radial-gradient(
+    ellipse 90% 70% at 0% 0%,
+    rgba(6, 182, 212, 0.12) 0%,
+    rgba(8, 145, 178, 0.05) 40%,
+    transparent 70%
+  );
+}
+
+.section-gradient-emerald {
+  background: radial-gradient(
+    ellipse 90% 70% at 0% 0%,
+    rgba(16, 185, 129, 0.06) 0%,
+    rgba(6, 182, 212, 0.03) 35%,
+    transparent 65%
+  );
+}
+.dark .section-gradient-emerald {
+  background: radial-gradient(
+    ellipse 90% 70% at 0% 0%,
+    rgba(16, 185, 129, 0.11) 0%,
+    rgba(5, 150, 105, 0.05) 40%,
+    transparent 70%
+  );
+}
+
+.section-gradient-amber {
+  background: radial-gradient(
+    ellipse 90% 70% at 0% 0%,
+    rgba(245, 158, 11, 0.06) 0%,
+    rgba(251, 191, 36, 0.03) 35%,
+    transparent 65%
+  );
+}
+.dark .section-gradient-amber {
+  background: radial-gradient(
+    ellipse 90% 70% at 0% 0%,
+    rgba(245, 158, 11, 0.1) 0%,
+    rgba(217, 119, 6, 0.05) 40%,
+    transparent 70%
+  );
+}
+
+.section-gradient-rose {
+  background: radial-gradient(
+    ellipse 90% 70% at 0% 0%,
+    rgba(244, 63, 94, 0.05) 0%,
+    rgba(168, 85, 247, 0.03) 35%,
+    transparent 65%
+  );
+}
+.dark .section-gradient-rose {
+  background: radial-gradient(
+    ellipse 90% 70% at 0% 0%,
+    rgba(244, 63, 94, 0.10) 0%,
+    rgba(190, 18, 60, 0.04) 40%,
+    transparent 70%
+  );
+}
+
