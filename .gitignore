@@ -12,6 +12,7 @@
 
 # testing
 /coverage
+.vitest-cache
 
 # next.js
 /.next/
