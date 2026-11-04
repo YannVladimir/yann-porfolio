@@ -15,6 +15,18 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({ name: "", email: "", subject: "", message: "" });
 
+  // Reset the modal's internal state whenever it closes, otherwise the next
+  // time it's opened it can still show the previous "message sent" success
+  // screen (or stale form fields) instead of a blank form. This happened
+  // because the component never unmounts — isOpen just toggles whether it
+  // renders null — so React preserves its state between opens/closes.
+  const handleClose = () => {
+    onClose();
+    setFormSubmitted(false);
+    setIsSubmitting(false);
+    setFormData({ name: "", email: "", subject: "", message: "" });
+  };
+
   if (!isOpen) return null;
 
   const handleCopyEmail = () => {
@@ -51,8 +63,11 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
       } else {
         throw new Error("Submission failed");
       }
-    } catch {
-      // Fallback: open default email client
+    } catch (err) {
+      // Fallback: open default email client. Logging the error (instead of
+      // silently swallowing it) makes real failures visible in the console
+      // rather than looking identical to the happy path.
+      console.error("Contact form submission failed, falling back to mailto:", err);
       window.location.href = `mailto:${PERSONAL_INFO.email}?subject=${encodeURIComponent(
         formData.subject || "Portfolio Inquiry"
       )}&body=${encodeURIComponent(
@@ -78,7 +93,8 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
             </h2>
           </div>
           <button
-            onClick={onClose}
+            onClick={handleClose}
+            aria-label="Close contact form"
             className="p-1.5 rounded-full text-neutral-400 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors cursor-pointer"
           >
             <X size={20} />
@@ -130,7 +146,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
             </p>
             <div className="pt-2 flex justify-center">
               <button
-                onClick={() => { setFormSubmitted(false); onClose(); }}
+                onClick={handleClose}
                 className="px-5 py-2.5 rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 text-xs font-medium cursor-pointer"
               >
                 Close

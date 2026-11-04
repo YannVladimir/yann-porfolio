@@ -70,7 +70,9 @@ export const PERSONAL_INFO = {
   phone: "+250 782 767 289",
   whatsapp: "+250782767289",
   whatsappUrl: "https://wa.me/250782767289?text=Hello%20Yann%2C%20I%20visited%20your%20portfolio%20and%20would%20like%20to%20connect.",
-  github: "https://github.com",
+  github: "https://github.com/YannVladimir",
+  // TODO: replace with the real LinkedIn profile URL — this was a dead
+  // placeholder (just "https://linkedin.com") that didn't link anywhere useful.
   linkedin: "https://linkedin.com",
   availability: "Open for select advisory & high-impact engineering leadership",
   yearsExperience: "10+",
