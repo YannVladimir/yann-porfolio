@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { Play, Pause, RefreshCw, Volume2, Sparkles, CheckCircle2 } from "lucide-react";
 
 interface SamplePhrase {
@@ -35,7 +35,6 @@ export function WaveformVisualizer() {
   const [isPlaying, setIsPlaying] = useState(true);
   const [activePhraseIndex, setActivePhraseIndex] = useState(0);
   const [progress, setProgress] = useState(0);
-  const [decodedTokens, setDecodedTokens] = useState<string[]>([]);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const currentPhrase = SAMPLE_PHRASES[activePhraseIndex];
@@ -62,11 +61,13 @@ export function WaveformVisualizer() {
     return () => clearInterval(interval);
   }, [isPlaying, currentPhrase]);
 
-  // Token decoding effect as audio progresses
-  useEffect(() => {
+  // Decoded tokens are derived directly from progress/currentPhrase on render
+  // rather than synced via an effect, so the subtitle never lags a frame
+  // behind the progress bar/canvas.
+  const decodedTokens = useMemo(() => {
     const words = currentPhrase.english.split(" ");
     const numWordsToShow = Math.floor(progress * words.length);
-    setDecodedTokens(words.slice(0, numWordsToShow + 1));
+    return words.slice(0, numWordsToShow + 1);
   }, [progress, currentPhrase]);
 
   // Waveform canvas rendering

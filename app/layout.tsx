@@ -92,7 +92,8 @@ const jsonLd = {
     addressCountry: "Rwanda",
   },
   sameAs: [
-    "https://github.com",
+    "https://github.com/YannVladimir",
+    // TODO: replace with the real LinkedIn profile URL.
     "https://linkedin.com",
   ],
   knowsAbout: [

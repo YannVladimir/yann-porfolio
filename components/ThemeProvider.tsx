@@ -12,34 +12,35 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
+function applyTheme(newTheme: Theme) {
+  const root = document.documentElement;
+  if (newTheme === "dark") {
+    root.classList.add("dark");
+    root.classList.remove("light");
+  } else {
+    root.classList.add("light");
+    root.classList.remove("dark");
+  }
+}
+
+function getInitialTheme(): Theme {
+  if (typeof window === "undefined") return "light";
+  const savedTheme = window.localStorage.getItem("yann-theme") as Theme | null;
+  return savedTheme === "dark" || savedTheme === "light" ? savedTheme : "light";
+}
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("light");
-  const [mounted, setMounted] = useState(false);
+  // Lazy-initialized from localStorage so the correct theme is known before
+  // the first paint, instead of flashing "light" and then switching to the
+  // saved theme once an effect runs on mount.
+  const [theme, setThemeState] = useState<Theme>(getInitialTheme);
 
   useEffect(() => {
-    // Check saved theme in localStorage; default to "light" mode
-    const savedTheme = localStorage.getItem("yann-theme") as Theme | null;
-    if (savedTheme === "dark" || savedTheme === "light") {
-      setThemeState(savedTheme);
-      applyTheme(savedTheme);
-    } else {
-      const initial: Theme = "light";
-      setThemeState(initial);
-      applyTheme(initial);
-    }
-    setMounted(true);
+    // Sync the <html> class with whatever theme we resolved on init.
+    applyTheme(theme);
+    // Only run once on mount — subsequent theme changes go through setTheme below.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const applyTheme = (newTheme: Theme) => {
-    const root = document.documentElement;
-    if (newTheme === "dark") {
-      root.classList.add("dark");
-      root.classList.remove("light");
-    } else {
-      root.classList.add("light");
-      root.classList.remove("dark");
-    }
-  };
 
   const setTheme = (newTheme: Theme) => {
     setThemeState(newTheme);
@@ -54,7 +55,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme, setTheme }}>
-      <div className={mounted ? "" : "opacity-[0.99]"}>{children}</div>
+      {children}
     </ThemeContext.Provider>
   );
 }
